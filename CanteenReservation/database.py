@@ -26,20 +26,15 @@ class DataBase(Resource):
    
      cur.execute('''CREATE TABLE db_registration
       (ID SERIAL PRIMARY KEY,
-      first_name     TEXT     NOT NULL,
-      last_name      TEXT     NOT NULL,
-      user_name      TEXT     NOT NULL,
+      name     TEXT     NOT NULL,
       password       TEXT     NOT NULL,
       email          TEXT     NOT NULL,
       phone_no       TEXT     NOT NULL,
-      address        TEXT     NOT NULL,
-      country        TEXT     NOT NULL,
-      postal_code    TEXT     NOT NULL,
       role           TEXT     NOT NULL,
       unique_id      TEXT     NOT NULL);''')
 
-     cur.execute("""INSERT INTO db_registration (first_name,last_name,user_name,password,email,phone_no,address,country,postal_code,role,unique_id)
-                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",("Admin","Dreamz","admin","admin@123","admin@sereneneuk.ac.uk","0227894556","heathrow","UK","IG11 8FW","admin","1"))
+     cur.execute("""INSERT INTO db_registration (name,password,email,phone_no,role,unique_id)
+                    VALUES (%s,%s,%s,%s,%s,%s)""",("Admin","admin@123","admin@sereneneuk.ac.uk","0227894556","admin","1"))
 
      connection.commit()
      cur.close()
@@ -88,18 +83,13 @@ class DataBase(Resource):
 
 
  def insertCustomerData(self,args):
-     first_name = args['first_name']
-     last_name = args['last_name']
+     name = args['name']
      password = args['password']
-     user_name = args['user_name']
      email = args['email']
      phone_no = args['phone_no']
-     address = args['address']
-     country = args['country']
-     postal_code = args['postal_code']
      unique_id = self.generaterandomNumber()
-     query = """INSERT INTO db_registration (first_name,last_name,user_name,password,email,phone_no,address,country,postal_code,role,unique_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id """
-     insertdata = (first_name,last_name,user_name,password,email,phone_no,address,country,postal_code,"user",unique_id)
+     query = """INSERT INTO db_registration (name,password,email,phone_no,role,unique_id) VALUES (%s,%s,%s,%s,%s,%s) RETURNING id """
+     insertdata = (name,password,email,phone_no,"user",unique_id)
      insertval = self.insertQuery(query,insertdata)
      status = {"status": "1", "id": insertval}
      return jsonify(status)

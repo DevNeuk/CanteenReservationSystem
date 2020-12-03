@@ -22,6 +22,14 @@ api = Api(app)
 
 @app.before_first_request
 def create_tables():
-  
      DataBase.CreateTable()
 
+@app.route('/register', methods = ['POST'])
+def registration_fun() :
+     registerinstance = Registration()
+     return registerinstance.insert_Customerdata()
+
+@app.route('/login',methods = ['POST'])
+def login_fun():
+    registerinstance = Registration()
+    return registerinstance.getLoginInfo()

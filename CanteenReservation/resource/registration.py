@@ -11,15 +11,10 @@ class Registration(Resource):
       
       def insert_Customerdata(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('first_name', type=str)
-        parser.add_argument('last_name', type=str)
-        parser.add_argument('user_name', type=str)
+        parser.add_argument('name', type=str)
         parser.add_argument('password', type=str)
         parser.add_argument('email', type=str)
         parser.add_argument('phone_no', type=str)
-        parser.add_argument('address', type=str)
-        parser.add_argument('country', type=str)
-        parser.add_argument('postal_code', type=str)
         parser.add_argument('unique_id', type=str)
         args = parser.parse_args()
         #print(args['user_name'], args['password'],args)
