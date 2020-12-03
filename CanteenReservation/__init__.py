@@ -13,7 +13,7 @@ app = Flask(__name__)
 CORS(app)
 
 
-@app.route('/try')
+@app.route('/')
 def getname():
   status = {"status": "1", "id": "Hello"}
   return jsonify(status)

@@ -13,4 +13,5 @@ six==1.15.0
 psycopg2==2.8.6
 requests==2.25.0
 Flask-Cors==3.0.9
+gunicorn==20.0.4
 
