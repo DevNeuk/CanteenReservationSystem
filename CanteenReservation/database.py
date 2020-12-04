@@ -214,7 +214,7 @@ class DataBase(Resource):
      conn.commit()
      conn.close()
 
- def selectQuery(self,query):
+ def selectQuerywithoutargs(self,query):
      conn = self.checkConnection()
      cursor = conn.cursor()
      cursor.execute(query)
@@ -244,7 +244,7 @@ class DataBase(Resource):
 
  def getfoodmenu(self):
      query = "select json_agg(t) from (select * from db_menu order by id)  t"
-     customerdata = self.selectQuery(query)
+     customerdata = self.selectQuerywithoutargs(query)
      status = {"status": "1", "data": customerdata}
      return jsonify(status)
 
