@@ -37,6 +37,11 @@ class Registration(Resource):
         args = parser.parse_args()
         customerdata = db.getLoginInfo(args)
         return customerdata
+
+      def getmenu(self):
+        db = DataBase()
+        customerdata = db.getfoodmenu()
+        return customerdata
       
       
     

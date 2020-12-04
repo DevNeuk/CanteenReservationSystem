@@ -33,3 +33,8 @@ def registration_fun() :
 def login_fun():
     registerinstance = Registration()
     return registerinstance.getLoginInfo()
+
+@app.route('/menu',methods = ['POST'])
+def menu_info():
+    registerinstance = Registration()
+    return registerinstance.getmenu()
