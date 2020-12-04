@@ -129,8 +129,8 @@ class DataBase(Resource):
      #query = "select * from db_registration where email = %s and password = %s"
      insertValue = (email,password)
      customerdata = self.selectQuery(query,insertValue)
-     print(customerdata)
-     return jsonify(customerdata)
+     status = {"status": "1", "data": customerdata}
+     return jsonify(status)
 
  def selectQuery(self,query,insertdata):
      conn = self.checkConnection()
