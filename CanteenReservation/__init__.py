@@ -43,3 +43,8 @@ def menu_info():
 def bookorder_fun():
     booking = Booking()
     return booking.insertOrderDetails()
+
+@app.route('/vieworder',methods = ['POST'])
+def vieworder_fun():
+    booking = Booking()
+    return booking.getOrderDetailsInfo()

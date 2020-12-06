@@ -106,6 +106,7 @@ class DataBase(Resource):
    
       cur.execute('''CREATE TABLE db_booking
       (ID SERIAL PRIMARY KEY,
+      booking_timeslot   TEXT     NOT NULL,
       booking_status     TEXT     NOT NULL,
       total_price     TEXT     NOT NULL,
       booking_id     TEXT     NOT NULL,  
@@ -256,16 +257,17 @@ class DataBase(Resource):
         for x in json_data['items']:
             itemname = x['item_name']
             itemprice = x['item_price']
-            item_count = x['item_count']
+            itemcount = x['item_count']
             query2 = """INSERT INTO db_bookingitems (item_price,item_count,item_name,booking_id)
                     VALUES (%s,%s,%s,%s) RETURNING booking_id"""
-            insertbookingitemsdata = (itemprice,item_count,itemname,bookingId)
+            insertbookingitemsdata = (itemprice,itemcount,itemname,bookingId)
             self.insertQuery(query2,insertbookingitemsdata)
       
 
-        query1 = """INSERT INTO db_booking (booking_status,total_price,booking_id,total_count,unique_id)
-                    VALUES (%s,%s,%s,%s,%s) RETURNING booking_id"""
+        query1 = """INSERT INTO db_booking (booking_timeslot,booking_status,total_price,booking_id,total_count,unique_id)
+                    VALUES (%s,%s,%s,%s,%s,%s) RETURNING booking_id"""
         insertbookingdata = (
+                      json_data['booking_timeslot'],
                       json_data['booking_status'],
                       json_data['total_price'],bookingId,json_data['total_count'],json_data['unique_id'])
         self.insertQuery(query1,insertbookingdata)
@@ -278,14 +280,7 @@ class DataBase(Resource):
      return randint(10000, 99999)
 
 
- def getDatabyLoginId(self,args):
-     if(args['role']=='admin'):
-          query = "select json_agg(t) from (select * from db_registration INNER JOIN db_roombooking on (db_registration.unique_id = db_roombooking.unique_id) where db_registration.role = 'user')  t"
-     else :
-          query = "select json_agg(t) from (select * from db_roombooking where unique_id = %s)  t"
-     insertValue = (args['unique_id'],)
-     customerdata = self.selectQuery(query,insertValue)
-     return jsonify(customerdata)
+ 
 
  def getfoodmenu(self):
      query = "select json_agg(t) from (select * from db_menu order by id)  t"
@@ -293,6 +288,19 @@ class DataBase(Resource):
      status = {"status": "1", "data": customerdata}
      return jsonify(status)
 
+ def getOrderDetailsByBookingID(self,args) :
+     if(args['role']=='admin'):
+
+          query = "select json_agg(t) from (select * from db_booking INNER JOIN db_bookingitems on (db_booking.booking_id  = db_bookingitems.booking_id))  t"
+     else :
+          queryinneritems = "select json_agg(t) from (select item_name,item_price,item_count from db_booking INNER JOIN db_bookingitems on (db_booking.booking_id  = db_bookingitems.booking_id) where unique_id = %s) t" 
+          queryouteritems = "select json_agg(t) from (select * from db_booking where unique_id = %s and booking_id = %s) t"
+          insertbookingdata = (args['unique_id'],)
+          intvalue = self.selectQuery(queryinneritems,insertbookingdata)
+          intsolu = self.selectQuery(queryouteritems,insertbookingdata)
+          status = {"status": "1", "items": intvalue, "items": intsolu[0]}
+
+     return jsonify(status)
 
 
 

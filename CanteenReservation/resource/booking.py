@@ -28,12 +28,14 @@ class Booking(Resource):
         db = DataBase()
         return db.getDatabyLoginId(args)
 
-    def getBookingIdInfo(self):
+    def getOrderDetailsInfo(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('booking_id', type=str)
+        #parser.add_argument('booking_id', type=str)
+        parser.add_argument('unique_id', type=str)
+        parser.add_argument('role',type=str)
         args = parser.parse_args()
         db = DataBase()
-        return db.getDatabyBookingId(args)
+        return db.getOrderDetailsByBookingID(args)
 
     def cancelbooking(self):
         parser = reqparse.RequestParser()
