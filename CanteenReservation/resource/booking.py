@@ -7,8 +7,8 @@ class Booking(Resource):
    
   
     def insertOrderDetails(self):
-       # parser = reqparse.RequestParser()
-        #parser.add_argument('unique_id', type=str)
+        parser = reqparse.RequestParser()
+        parser.add_argument('unique_id', type=str)
        # parser.add_argument('items', type = list, location='json')
        # parser.add_argument('total_count', type=str)         
        # parser.add_argument('booking_status', type=str)

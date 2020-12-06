@@ -254,6 +254,14 @@ class DataBase(Resource):
 
         bookingId = self.generaterbookingId()
 
+        query1 = """INSERT INTO db_booking (booking_timeslot,booking_status,total_price,booking_id,total_count,unique_id)
+                    VALUES (%s,%s,%s,%s,%s,%s) RETURNING booking_id"""
+        insertbookingdata = (
+                      json_data['booking_timeslot'],
+                      json_data['booking_status'],
+                      json_data['total_price'],bookingId,json_data['total_count'],json_data['unique_id'])
+        self.insertQuery(query1,insertbookingdata)
+
         for x in json_data['items']:
             itemname = x['item_name']
             itemprice = x['item_price']
@@ -264,13 +272,7 @@ class DataBase(Resource):
             self.insertQuery(query2,insertbookingitemsdata)
       
 
-        query1 = """INSERT INTO db_booking (booking_timeslot,booking_status,total_price,booking_id,total_count,unique_id)
-                    VALUES (%s,%s,%s,%s,%s,%s) RETURNING booking_id"""
-        insertbookingdata = (
-                      json_data['booking_timeslot'],
-                      json_data['booking_status'],
-                      json_data['total_price'],bookingId,json_data['total_count'],json_data['unique_id'])
-        self.insertQuery(query1,insertbookingdata)
+      
         status = {"status": "1", "id": bookingId}
         return jsonify(status)
             
@@ -293,12 +295,15 @@ class DataBase(Resource):
 
           query = "select json_agg(t) from (select * from db_booking INNER JOIN db_bookingitems on (db_booking.booking_id  = db_bookingitems.booking_id))  t"
      else :
-          queryinneritems = "select json_agg(t) from (select item_name,item_price,item_count from db_booking INNER JOIN db_bookingitems on (db_booking.booking_id  = db_bookingitems.booking_id) where unique_id = %s) t" 
-          queryouteritems = "select json_agg(t) from (select * from db_booking where unique_id = %s and booking_id = %s) t"
-          insertbookingdata = (args['unique_id'],)
-          intvalue = self.selectQuery(queryinneritems,insertbookingdata)
-          intsolu = self.selectQuery(queryouteritems,insertbookingdata)
-          status = {"status": "1", "items": intvalue, "items": intsolu[0]}
+          unique_id = args['unique_id']
+          #queryinneritems = "select json_agg(t) from (select item_name,item_price,item_count from db_booking INNER JOIN db_bookingitems on (db_booking.booking_id  = db_bookingitems.booking_id) where unique_id = %s) t" 
+          #queryouteritems = "select json_build_object(t) from (select * from db_booking where unique_id = %s and booking_id = %s,select json_agg(d) from (select item_name,item_price,item_count from db_booking INNER JOIN db_bookingitems on (db_booking.booking_id  = db_bookingitems.booking_id) where unique_id = %s) d) t"
+          query = "select json_agg(t) from (SELECT db_booking.id, db_booking.booking_timeslot,db_booking.total_price,db_booking.booking_id,db_booking.booking_status,db_booking.unique_id,db_booking.total_count, json_agg((SELECT x FROM (SELECT db_bookingitems.id, db_bookingitems.item_price,db_bookingitems.item_count,db_bookingitems.item_name,db_bookingitems.booking_id)AS x)) AS items FROM   db_booking JOIN   db_bookingitems ON db_bookingitems.booking_id = db_booking.booking_id where db_booking.unique_id = %s GROUP  BY db_booking.id) t"
+          insertbookingdata = (unique_id,)
+
+          #intvalue = self.selectQuery(queryinneritems,insertbookingdata)
+          intsolu = self.selectQuery(query,insertbookingdata)
+          status = {"status": "1", "items": intsolu }
 
      return jsonify(status)
 
