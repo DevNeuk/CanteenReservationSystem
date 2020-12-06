@@ -3,6 +3,7 @@ from flask_restful import Resource
 from flask import jsonify
 import psycopg2.extensions
 import json
+from json import loads
 from random import randint
 import psycopg2.extras
 import datetime
@@ -35,6 +36,27 @@ class DataBase(Resource):
 
      cur.execute("""INSERT INTO db_registration (name,password,email,phone_no,role,unique_id)
                     VALUES (%s,%s,%s,%s,%s,%s)""",("Admin","admin@123","admin@sereneneuk.ac.uk","0227894556","admin","1"))
+
+    if(self.table_exists(connection,"db_booking")):
+   
+      cur.execute('''CREATE TABLE db_booking
+      (ID SERIAL PRIMARY KEY,
+      booking_status     TEXT     NOT NULL,
+      total_price     TEXT     NOT NULL,
+      booking_id     TEXT     NOT NULL,  
+      total_count     TEXT     NOT NULL,
+      unique_id      TEXT     NOT NULL);''')
+
+
+    if(self.table_exists(connection,"db_bookingitems")):
+   
+      cur.execute('''CREATE TABLE db_bookingitems
+      (ID SERIAL PRIMARY KEY,
+      item_price          TEXT     NOT NULL,
+      item_count       TEXT     NOT NULL,
+      item_name           TEXT     NOT NULL,
+      booking_id      TEXT     NOT NULL);''')
+
 
     if(self.table_exists(connection,"db_menu")):
    
@@ -224,10 +246,30 @@ class DataBase(Resource):
      conn.close()
      return insertvalue[0]
 
+ def bookorder(self,args) :
 
+        bookingId = self.generaterbookingId()
+        jsonobj = json.loads(args['items'])                                 
 
-
-
+        for x in jsonobj['items']:
+            itemname = x['item_name']
+            itemprice = x['item_price']
+            item_count = x['item_count']
+                                        
+            query2 = """INSERT INTO db_bookingitems (item_price,item_count,item_name,booking_id)
+                    VALUES (%s,%s,%s,%s) RETURNING booking_id"""
+            insertbookingitemsdata = (item_price,item_count,item_name,booking_id)
+            self.insertQuery(query2,insertbookingitemsdata)
+        
+        query1 = """INSERT INTO db_booking (booking_status,total_price,booking_id,unique_id,total_count)
+                    VALUES (%s,%s,%s,%s,%s) RETURNING booking_id"""
+        insertbookingdata = (args['unique_id'],
+                      args['booking_status'],
+                      bookingId,args['total_price'],args[total_count])
+        self.insertQuery(query1,insertbookingdata)
+        return jsonify(status)
+            
+ 
 
  def generaterbookingId(self):
      return randint(10000, 99999)

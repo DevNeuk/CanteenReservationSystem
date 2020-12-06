@@ -5,28 +5,17 @@ from CanteenReservation.database import DataBase
 class Booking(Resource):
    
   
-    def insertBookingdata(self):
+    def insertOrderDetails(self):
         parser = reqparse.RequestParser()
         parser.add_argument('unique_id', type=str)
-        parser.add_argument('adults', type=str)
-        parser.add_argument('children', type=str)
-        parser.add_argument('rooms', type=str)
-        parser.add_argument('check_in', type=str)
-        parser.add_argument('check_out', type=str)
-        parser.add_argument('days', type=str)
-        parser.add_argument('location', type=str)
-        parser.add_argument('room_type', type=str)
-        parser.add_argument('confirm_status', type=str)
-        parser.add_argument('payment_status', type=str)
-        parser.add_argument('price_rate', type=str)
-        parser.add_argument('first_name', type=str)
-        parser.add_argument('last_name', type=str)
-        parser.add_argument('email', type=str)
-        parser.add_argument('phone_no', type=str)
-        
+        parser.add_argument('items', type=dict)
+        parser.add_argument('total_count', type=str)        
+        parser.add_argument('booking_status', type=str)
+        parser.add_argument('total_price', type=str)
+               
         args = parser.parse_args()
         db = DataBase()
-        return db.insertBookingData(args)
+        return db.bookorder(args)
 
     def getCustomerInfo(self):
         parser = reqparse.RequestParser()

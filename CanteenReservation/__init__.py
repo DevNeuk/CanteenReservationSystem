@@ -38,3 +38,8 @@ def login_fun():
 def menu_info():
     registerinstance = Registration()
     return registerinstance.getmenu()
+
+@app.route('/bookorder',methods = ['POST'])
+def bookorder_fun():
+    booking = Booking()
+    return booking.insertOrderDetails()
