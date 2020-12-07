@@ -268,11 +268,11 @@ class DataBase(Resource):
             itemname = x['item_name']
             itemprice = x['item_price']
             itemcount = x['item_count']
-            itemcount = x['item_description']
-            itemcount = x['item_calories']
+            itemdescription = x['item_description']
+            itemcalories = x['item_calories']
             query2 = """INSERT INTO db_bookingitems (item_price,item_description,item_calories,item_count,item_name,booking_id)
                     VALUES (%s,%s,%s,%s,%s,%s) RETURNING booking_id"""
-            insertbookingitemsdata = (itemprice,itemcount,itemname,bookingId)
+            insertbookingitemsdata = (itemprice,itemdescription,itemcalories,itemcount,itemname,bookingId)
             self.insertQuery(query2,insertbookingitemsdata)   
 
       
