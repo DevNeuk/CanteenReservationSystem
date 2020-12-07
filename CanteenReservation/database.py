@@ -309,7 +309,7 @@ class DataBase(Resource):
 
           #intvalue = self.selectQuery(queryinneritems,insertbookingdata)
           intsolu = self.selectQuery(query,insertbookingdata)
-          status = {"status": "1", "items": intsolu}
+          status = {"status": "1", "menu": intsolu}
 
      return jsonify(status)
 
