@@ -297,7 +297,7 @@ class DataBase(Resource):
      if(args['role']=='admin'):
 
           #query = "select json_agg(t) from (select * from db_booking INNER JOIN db_bookingitems on (db_booking.booking_id  = db_bookingitems.booking_id))  t"
-          query = "select json_agg(t) from (SELECT db_booking.id,db_booking.booking_timeslot,db_booking.total_price,db_booking.booking_status,db_booking.unique_id,db_booking.total_count,,db_booking.booking_id,json_agg((SELECT x FROM (SELECT db_bookingitems.id,db_bookingitems.item_price,db_bookingitems.item_description,db_bookingitems.item_calories,db_bookingitems.item_count,db_bookingitems.item_name,db_bookingitems.booking_id)AS x)) AS items FROM   db_booking JOIN   db_bookingitems ON db_bookingitems.booking_id = db_booking.booking_id GROUP  BY db_booking.id) t"
+          query = "select json_agg(t) from (SELECT db_booking.id,db_booking.booking_timeslot,db_booking.total_price,db_booking.booking_status,db_booking.unique_id,db_booking.total_count,db_booking.booking_id,db_registration.name , json_agg (( SELECT x FROM (SELECT db_bookingitems.id,db_bookingitems.item_price,db_bookingitems.item_description,db_bookingitems.item_calories,db_bookingitems.item_count,db_bookingitems.item_name,db_bookingitems.booking_id)AS x)) AS items FROM  db_booking INNER JOIN db_registration on 	db_registration.unique_id = db_booking.unique_id INNER JOIN   db_bookingitems ON db_bookingitems.booking_id = db_booking.booking_id GROUP  BY db_booking.id,db_registration.id) t"
           intsolu = self.selectQuerywithoutargs(query)
           status = {"status": "1", "items": intsolu}
      else :
